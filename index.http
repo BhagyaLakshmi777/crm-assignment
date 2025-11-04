@@ -1,16 +1,12 @@
-http://127.0.0.1:3000/
-
-###
-
 ### Register a new employee
-
 POST http://127.0.0.1:3000/api/employees/register/ 
 Content-Type: application/json 
 
 {
-    "email": "blessy333@gmail.com",
-    "password": "blessy123",
-    "name": "Blessy"
+    "id": 6,
+    "email": "jones555@gmail.com",
+    "password": "jones456",
+    "name": "Jones"
 }
 
 ### Employee login
@@ -18,7 +14,29 @@ POST http://127.0.0.1:3000/api/employees/login
 Content-Type: application/json
 
 {
-    "email": "ramya333@gmail.com",
-    "password": "ramya23"
+    "email": "jones555@gmail.com",
+    "password": "jones456"
 }
+
+###  Public Enquiry
+POST http://127.0.0.1:3000/api/enquiries/public 
+Content-Type: application/json 
+
+{
+    "id": 21,
+    "name": "swatika",
+    "email": "swat@gmail.com",
+    "courseInterest": "DBMS"
+ }
+###  Fetch Unclaimed Leads
+ GET http://127.0.0.1:3000/api/enquiries/public/  
+ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6bnVsbCwiaWF0IjoxNzYyMjUyNzQ0fQ.YDRe_aFRCAPVXNpTsorPyVCgxHxcxBc0HUpWirbfzpg
+
+### Fetch Claimed Leads
+ GET http://127.0.0.1:3000/api/enquiries/private
+ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6bnVsbCwiaWF0IjoxNzYyMjUyNzQ0fQ.YDRe_aFRCAPVXNpTsorPyVCgxHxcxBc0HUpWirbfzpg
+### Claim Lead
+ PATCH http://127.0.0.1:3000/api/enquiries/13/claim
+ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6bnVsbCwiaWF0IjoxNzYyMjUyNzQ0fQ.YDRe_aFRCAPVXNpTsorPyVCgxHxcxBc0HUpWirbfzpg
+
 
