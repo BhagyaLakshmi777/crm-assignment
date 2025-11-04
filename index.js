@@ -18,7 +18,7 @@ const dbPath = path.join(__dirname, process.env.DB_FILENAME || "crm.db");
 
 const hostname = process.env.HOSTNAME || '127.0.0.1';
 const port = process.env.PORT || 3000; 
-const secretToken = process.env.SECRETTOKEN || "MY_SECRET_TOKEN"
+const secretToken = process.env.JWT_SECRET || "MY_SECRET_TOKEN"
 
 let db = null;
 
@@ -84,7 +84,7 @@ app.post("/api/employees/login", async (request, response) =>{
       if (isPasswordMatch){
         const payload = {id: dbUser.id}
         
-        const jwtToken = jwt.sign(payload, '${secretToken}')
+        const jwtToken = jwt.sign(payload, '${JWT_SECRET}')
         response.send({jwtToken})
       }
       else{
@@ -105,7 +105,7 @@ const authenticateToken = (request, response, next) => {
     response.status(401);
     response.send("Unauthorized");
   } else {
-    jwt.verify(jwtToken, '${secretToken}', async (error, payload) => {
+    jwt.verify(jwtToken, '${JWT_SECRET}', async (error, payload) => {
       if (error) {
         response.status(401);
         response.send("Unauthorized");
