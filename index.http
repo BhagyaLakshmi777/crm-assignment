@@ -1,0 +1,24 @@
+http://127.0.0.1:3000/
+
+###
+
+### Register a new employee
+
+POST http://127.0.0.1:3000/api/employees/register/ 
+Content-Type: application/json 
+
+{
+    "email": "blessy333@gmail.com",
+    "password": "blessy123",
+    "name": "Blessy"
+}
+
+### Employee login
+POST http://127.0.0.1:3000/api/employees/login
+Content-Type: application/json
+
+{
+    "email": "ramya333@gmail.com",
+    "password": "ramya23"
+}
+
