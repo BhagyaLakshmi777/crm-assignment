@@ -41,10 +41,9 @@ const initializeDbAndServer = async () => {
 }
 initializeDbAndServer()   
 
-//api 1 
-
+// Register API 
 app.post("/api/employees/register", async (request,response) =>{
-  const {email, password, name} = request.body;
+  const {id, email, password, name} = request.body;
   const hashPassword = await bcrypt.hash(password, 10)
   const selectUserQuery = `
                             SELECT * FROM Employee
@@ -53,7 +52,7 @@ app.post("/api/employees/register", async (request,response) =>{
   const dbUser = await db.get(selectUserQuery)
   if (dbUser === undefined){
     const createUser = ` 
-        INSERT INTO Employee (name, email, password) VALUES ('${name}', '${email}', '${hashPassword}');
+        INSERT INTO Employee (id, name, email, password) VALUES (${id}, '${name}', '${email}', '${hashPassword}');
      `;
      await db.run(createUser)
      response.status(200)
@@ -66,7 +65,7 @@ app.post("/api/employees/register", async (request,response) =>{
   
 })
 
-//api 2 
+//Login API
 
 app.post("/api/employees/login", async (request, response) =>{
   const {email, password} = request.body;
@@ -75,7 +74,7 @@ app.post("/api/employees/login", async (request, response) =>{
                             WHERE email = '${email}';
   `;
    const dbUser = await db.get(selectUserQuery);
-   console.log(dbUser)
+   
     if (dbUser === undefined){
       response.status(400)
       response.send("Invalid User")
@@ -84,7 +83,7 @@ app.post("/api/employees/login", async (request, response) =>{
       const isPasswordMatch = await bcrypt.compare(password, dbUser.password);
       if (isPasswordMatch){
         const payload = {id: dbUser.id}
-        console.log(payload)
+        
         const jwtToken = jwt.sign(payload, '${secretToken}')
         response.send({jwtToken})
       }
@@ -95,7 +94,7 @@ app.post("/api/employees/login", async (request, response) =>{
     }
 
 })
-//api 3
+//JWT Authentication Middleware
 const authenticateToken = (request, response, next) => {
   let jwtToken;
   const authHeader = request.headers["authorization"];
@@ -117,7 +116,8 @@ const authenticateToken = (request, response, next) => {
     });
   }
 };
-//api 4 
+
+// Public Enquiry Form API
 app.post("/api/enquiries/public", async (request, response)=> {
  const {id, name, email, courseInterest} = request.body;
  const insertQuery = `
@@ -128,8 +128,8 @@ app.post("/api/enquiries/public", async (request, response)=> {
  response.send("Created")
 })
 
-//api 5 
-app.get("/api/enquiries/public", authenticateToken, async (request,response)=>{
+// API To Fetch Unclaimed Leads
+app.get("/api/enquiries/public", authenticateToken, async (request, response)=>{
   const selectEnquiry = `
                            SELECT * FROM Enquiry 
                            WHERE claimed = 0 AND counselorId IS NULL;
@@ -139,7 +139,7 @@ app.get("/api/enquiries/public", authenticateToken, async (request,response)=>{
   response.send(dbEnquiries)
 })
 
-//api 6  
+// API To Fetch Claimed Leads  
 app.get("/api/enquiries/private", authenticateToken, async (request,response)=>{
   const {id} = request
    const selectEnquiry = `
@@ -152,19 +152,17 @@ app.get("/api/enquiries/private", authenticateToken, async (request,response)=>{
 
 })
 
-//api 7 
+// Claim Lead API
 app.patch("/api/enquiries/:id/claim", authenticateToken, async (request, response)=>{
   const {id} = request.params;
-   console.log(request.id)
+   
   
     const selectEnquiry = `
                            SELECT * FROM Enquiry 
                            WHERE id = ${id};
   `;
   const dbResponse = await db.get(selectEnquiry);
-  console.log(dbResponse)
- 
-   if (dbResponse.claimed === 1){
+  if (dbResponse.claimed === 1){
     response.status(409);
     response.send("Conflict")
   }
@@ -182,3 +180,5 @@ app.patch("/api/enquiries/:id/claim", authenticateToken, async (request, respons
 
   }
 })
+
+module.exports = app;
